@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Radar Visualization – κ′ Spikes</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+  <h2>Narrative CMB – κ′ Spikes</h2>
+  <div id="plot"></div>
+  <script>
+    Plotly.d3.csv("radar_output_kprime.csv", function(err, rows){
+      function unpack(rows, key) {
+        return rows.map(row => parseFloat(row[key]));
+      }
+
+      var trace = {
+        x: unpack(rows, 'C_sem'),
+        y: unpack(rows, 'C_aff'),
+        text: rows.map(row => row['original_text']),
+        mode: 'markers',
+        marker: {
+          size: unpack(rows, 'C_temp').map(v => v * 50),
+          color: unpack(rows, 'C_meta'),
+          colorscale: 'Viridis',
+          colorbar: {
+            title: 'C_meta'
+          },
+          line: {
+            width: 1,
+            color: '#333'
+          }
+        },
+        type: 'scatter'
+      };
+
+      var data = [trace];
+      var layout = {
+        xaxis: { title: 'Coerência Semântica' },
+        yaxis: { title: 'Ressonância Afetiva' },
+        hovermode: 'closest'
+      };
+
+      Plotly.newPlot('plot', data, layout);
+    });
+  </script>
+</body>
+</html>
